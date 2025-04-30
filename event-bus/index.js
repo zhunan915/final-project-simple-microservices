@@ -13,6 +13,8 @@ app.use(cors({
 
 const events = [];
 
+//test
+
 app.post('/events', async (req, res) => {
   const event = req.body;
   events.push(event);
