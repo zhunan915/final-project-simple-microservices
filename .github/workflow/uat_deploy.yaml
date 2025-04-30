@@ -5,6 +5,7 @@ on:
   push:
     tags:
       - 'rc-*'  # e.g., rc-v1.0.0, rc-release, etc.
+  workflow_dispatch: 
 
 jobs:
   update-file:
@@ -19,4 +20,4 @@ jobs:
           git clone https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/zhunan915/augocd.git
           cd augocd
           git checkout -b uat
-          
+
