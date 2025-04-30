@@ -45,9 +45,9 @@ jobs:
 
       - name: Run unit tests
         run: |
-          cd client
+          cd $SERVICE
           npm install
-          # npm run test
+          npm run test
 
       - name: Log in to Amazon ECR
         id: login-ecr

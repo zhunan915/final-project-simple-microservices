@@ -1,12 +1,13 @@
-const app = require("express")();
+const express = require("express");
 const { randomBytes } = require("crypto");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const axios = require("axios");
 
+const app = express();
 const DB = {};
 
-//testest12
+// Middleware
 app.use(bodyParser.json());
 app.use(
   cors({
@@ -14,6 +15,7 @@ app.use(
   })
 );
 
+// Routes
 app.get("/", (req, res) => {
   res.send("<h1>Welcome to post service</h1>");
 });
@@ -70,6 +72,12 @@ app.post("/events", (req, res) => {
   res.send({}).end();
 });
 
-app.listen(8001, () => {
-  console.log("listening on http://localhost:8001");
-});
+// Start server only if this file is run directly
+if (require.main === module) {
+  app.listen(8001, () => {
+    console.log("listening on http://localhost:8001");
+  });
+}
+
+// Export for testing
+module.exports = app;
