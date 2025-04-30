@@ -1,0 +1,73 @@
+name: Frontend Build and Deploy to QA
+
+on:
+  push:
+    branches:
+      - qa
+    paths:
+      - 'client/**' 
+  workflow_dispatch: 
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      IMAGE_TAG: $(date +'%Y%m%d-%H%M%S')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Detect service from changed path
+        id: detect
+        run: |
+          SERVICE=$(echo "${{ github.event.head_commit.modified[0] }}" | cut -d'/' -f1)
+          echo "SERVICE=$SERVICE" >> $GITHUB_ENV
+          echo "Detected service: $SERVICE"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }} 
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Run unit tests
+        run: |
+          npm install
+          npm run test
+
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+
+      - name: Build and push Docker image
+        run: |
+          IMAGE_URI=${{ steps.login-ecr.outputs.registry }}/frontend/${SERVICE}:$IMAGE_TAG
+          echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+          docker build -t $IMAGE_URI .
+          docker push $IMAGE_URI
+
+      - name: Deploy to QA namespace by ArgoCD
+        run: |
+          git clone https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/zhunan915/augocd.git
+          cd augocd
+          git checkout qa
+          git pull -f origin qa
+          cd frontend/client
+          sed -i 's#${SERVICE}:.*#${SERVICE}:$IMAGE_TAG#' frontend-${SERVICE}.yaml
+          git config --global user.email "zshuai@dons.usfca.edu"
+          git config --global user.name "zhunan915"
+          git add frontend-${SERVICE}.yaml
+          git commit -m "Update frontend-${SERVICE}.yaml to $IMAGE_TAG"
+          git push origin qa
+
+      - name: Run smoke/integration tests
+        run: |
+          echo "Run your smoke/integration tests here"
+          # For example:
+          curl --fail http://acdefb256adc54a7d8f5e543bf3c6093-2082399940.us-east-1.elb.amazonaws.com || exit 1
