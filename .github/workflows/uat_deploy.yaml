@@ -20,6 +20,7 @@ jobs:
           git clone https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/zhunan915/augocd.git
           cd augocd
           git checkout -b uat
+          git pull -f origin uat
           cd frontend/posts
           sed -i 's#v1.0.0#v1.0.1#' frontend-posts.yaml
           git config --global user.email "zshuai@dons.usfca.edu"
