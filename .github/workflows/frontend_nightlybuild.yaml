@@ -27,6 +27,8 @@ jobs:
           SERVICE=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | awk -F/ '{print $1}' | sort -u | head -n 1)
           echo "SERVICE=$SERVICE" >> $GITHUB_ENV
           echo "Detected service: $SERVICE"
+          echo "GITHUB_REPOSITORY:$GITHUB_REPOSITORY"
+          echo "GITHUB_WORKSPACE:$GITHUB_WORKSPACE"
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
