@@ -58,7 +58,11 @@ jobs:
           pwd
           ls
           cd ${SERVICE}
-          docker build -t $IMAGE_URI .
+          pwd
+          ls
+          echo "${SERVICE}:$IMAGE_TAG"
+          # docker build -t $IMAGE_URI .
+          docker build -t 781942218065.dkr.ecr.us-east-1.amazonaws.com/frontend/${SERVICE}:$IMAGE_TAG .
           docker push $IMAGE_URI
 
       - name: Deploy to QA namespace by ArgoCD
