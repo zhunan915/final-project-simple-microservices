@@ -29,8 +29,6 @@ jobs:
           SERVICE=$(git diff --name-only HEAD~1 HEAD | awk -F/ '{print $1}' | sort -u | head -n 1)
           echo "SERVICE=$SERVICE" >> $GITHUB_ENV
           echo "Detected service: $SERVICE"
-          echo "GITHUB_REPOSITORY:$GITHUB_REPOSITORY"
-          echo "GITHUB_WORKSPACE:$GITHUB_WORKSPACE"
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -53,7 +51,8 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          IMAGE_URI=${{ steps.login-ecr.outputs.registry }}/frontend/${SERVICE}:$IMAGE_TAG
+          # IMAGE_URI=${{ steps.login-ecr.outputs.registry }}/frontend/${SERVICE}:$IMAGE_TAG
+          IMAGE_URI=781942218065.dkr.ecr.us-east-1.amazonaws.com/frontend/${SERVICE}:$IMAGE_TAG
           echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
           docker build -t $IMAGE_URI .
