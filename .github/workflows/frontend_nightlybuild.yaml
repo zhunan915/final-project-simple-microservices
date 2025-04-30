@@ -22,7 +22,8 @@ jobs:
       - name: Detect service from changed path
         id: detect
         run: |
-          SERVICE=$(echo "${{ github.event.head_commit.modified[0] }}" | cut -d'/' -f1)
+          FILE=$(git diff --name-only ${{ github.sha }}~1 ${{ github.sha }} | head -n 1)
+          SERVICE=$(echo $FILE | cut -d'/' -f1)
           echo "SERVICE=$SERVICE" >> $GITHUB_ENV
           echo "Detected service: $SERVICE"
 
