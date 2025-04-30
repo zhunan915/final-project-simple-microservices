@@ -1,0 +1,90 @@
+name: Backend Build and Deploy to QA
+
+on:
+  push:
+    branches:
+      - qa
+    paths:
+      - 'comments/**' 
+      - 'posts/**'
+      - 'query/**'
+      - 'moderation/**'
+      - 'event-bus/**'
+
+  workflow_dispatch: 
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      IMAGE_TAG: $(date +'%Y%m%d-%H%M%S')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2 
+        
+
+      - name: Detect service from changed path
+        id: detect
+        run: |
+          pwd
+          SERVICE=$(git diff --name-only HEAD~1 HEAD | awk -F/ '{print $1}' | sort -u | head -n 1)
+          echo "SERVICE=$SERVICE" >> $GITHUB_ENV
+          echo "Detected service: $SERVICE"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }} 
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Run unit tests
+        run: |
+          cd client
+          npm install
+          # npm run test
+
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+
+      - name: Build and push Docker image
+        run: |
+          IMAGE_TAG=$(date +'%Y%m%d-%H%M%S')
+          IMAGE_URI=${{ steps.login-ecr.outputs.registry }}/backend/${SERVICE}:$IMAGE_TAG
+          echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+          pwd
+          ls
+          cd ${SERVICE}
+          pwd
+          ls
+          echo "${SERVICE}:$IMAGE_TAG"
+          docker build -t $IMAGE_URI .
+          docker push $IMAGE_URI
+
+      - name: Deploy to QA namespace by ArgoCD
+        run: |
+          git clone https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/zhunan915/augocd.git
+          cd augocd
+          git checkout qa
+          git pull -f origin qa
+          cd backend/${SERVICE}
+          sed -i "s#${SERVICE}:.*#${SERVICE}:${IMAGE_TAG}#" backend-${SERVICE}.yaml
+          git config --global user.email "zshuai@dons.usfca.edu"
+          git config --global user.name "zhunan915"
+          git add backend-${SERVICE}.yaml
+          git commit -m "Update backend-${SERVICE}.yaml to $IMAGE_TAG"
+          git push origin qa
+
+      - name: Run smoke/integration tests
+        run: |
+          echo "Run your smoke/integration tests here"
+          # For example:
+          curl --fail http://acdefb256adc54a7d8f5e543bf3c6093-2082399940.us-east-1.elb.amazonaws.com || exit 1
