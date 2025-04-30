@@ -55,7 +55,8 @@ jobs:
           IMAGE_URI=781942218065.dkr.ecr.us-east-1.amazonaws.com/frontend/${SERVICE}:$IMAGE_TAG
           echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-          docker build -t $IMAGE_URI ./${SERVICE}
+          cd ${SERVICE}
+          docker build -t $IMAGE_URI .
           docker push $IMAGE_URI
 
       - name: Deploy to QA namespace by ArgoCD
