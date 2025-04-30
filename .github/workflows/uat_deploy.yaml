@@ -22,6 +22,8 @@ jobs:
           git checkout -b uat
           cd frontend/posts
           sed -i 's#v1.0.0#v1.0.1#' frontend-posts.yaml
+          git config --global user.email "zshuai@dons.usfca.edu"
+          git config --global user.name "zhunan915"
           git add frontend-posts.yaml
           git commit -m "Update frontend-posts.yaml to v1.0.1"
           git push origin uat
