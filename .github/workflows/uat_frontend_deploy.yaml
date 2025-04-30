@@ -4,7 +4,7 @@ name: Update Other Repo on Tag in UAT
 on:
   push:
     tags:
-      - 'rc-*'  # e.g., rc-v1.0.0, rc-release, etc.
+      - 'rc-client-*'  
   workflow_dispatch: 
 
 jobs:
@@ -15,17 +15,26 @@ jobs:
       - name: Checkout this repo
         uses: actions/checkout@v3
 
+      - name: Extract version from tag
+        run: |
+          TAG=${GITHUB_REF##*/}            # full tag like rc-client-v1.0.1
+          VERSION=${TAG##rc-client-}       # strip prefix, leave v1.0.1
+          echo "TAG=$TAG"
+          echo "VERSION=$VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
       - name: Clone target repo
         run: |
           git clone https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/zhunan915/augocd.git
           cd augocd
           git checkout uat
           git pull -f origin uat
-          cd frontend/posts
-          sed -i 's#v1.0.0#v1.0.1#' frontend-posts.yaml
+          cd frontend/client
+          # sed -i 's#v1.0.0#v1.0.1#' frontend-client.yaml
+          sed -i "s#v[0-9]*\.[0-9]*\.[0-9]*#${VERSION}#" frontend-client.yaml
           git config --global user.email "zshuai@dons.usfca.edu"
           git config --global user.name "zhunan915"
-          git add frontend-posts.yaml
-          git commit -m "Update frontend-posts.yaml to v1.0.1"
+          git add frontend-client.yaml
+          git commit -m "Update frontend-client.yaml to ${VERSION}"
           git push origin uat
 
