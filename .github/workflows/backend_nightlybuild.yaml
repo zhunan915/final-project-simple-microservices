@@ -87,4 +87,4 @@ jobs:
         run: |
           echo "Run your smoke/integration tests here"
           # For example:
-          curl --fail http://acdefb256adc54a7d8f5e543bf3c6093-2082399940.us-east-1.elb.amazonaws.com || exit 1
+          curl --fail http://qa.zhunandomain.live/${SERVICE} || exit 1
