@@ -1,0 +1,22 @@
+# .github/workflows/update-other-repo.yml
+name: Update Other Repo on Tag in UAT
+
+on:
+  push:
+    tags:
+      - 'rc-*'  # e.g., rc-v1.0.0, rc-release, etc.
+
+jobs:
+  update-file:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v3
+
+      - name: Clone target repo
+        run: |
+          git clone https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/zhunan915/augocd.git
+          cd augocd
+          git checkout -b uat
+          
