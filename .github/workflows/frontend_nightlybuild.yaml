@@ -71,7 +71,7 @@ jobs:
           git checkout qa
           git pull -f origin qa
           cd frontend/client
-          sed -i 's#${SERVICE}:.*#${SERVICE}:$IMAGE_TAG#' frontend-${SERVICE}.yaml
+          sed -i "s#${SERVICE}:.*#${SERVICE}:${IMAGE_TAG}#" frontend-${SERVICE}.yaml
           git config --global user.email "zshuai@dons.usfca.edu"
           git config --global user.name "zhunan915"
           git add frontend-${SERVICE}.yaml
