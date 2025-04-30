@@ -56,6 +56,7 @@ jobs:
           echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
           pwd
+          ls
           cd ${SERVICE}
           docker build -t $IMAGE_URI .
           docker push $IMAGE_URI
