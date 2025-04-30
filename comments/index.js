@@ -11,6 +11,8 @@ app.use(cors({
   origin: 'http://localhost:3000'
 }));
 
+//test
+
 app.get('/posts/:id/comments', (req, res) => {
   const postId = req.params.id;
   res.status(200).json(DB[postId] || []).end();
