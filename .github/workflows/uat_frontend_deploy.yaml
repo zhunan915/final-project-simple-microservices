@@ -4,7 +4,7 @@ name: Update Other Repo on Tag in UAT
 on:
   push:
     tags:
-      - 'rc-client:*'  
+      - 'rc-client_*'  
   workflow_dispatch: 
 
 jobs:
@@ -17,8 +17,8 @@ jobs:
 
       - name: Extract version from tag
         run: |
-          TAG=${GITHUB_REF##*/}            # full tag like rc-client:v1.0.1
-          VERSION=${TAG##rc-client:}       # strip prefix, leave v1.0.1
+          TAG=${GITHUB_REF##*/}            # full tag like rc-client_v1.0.1
+          VERSION=${TAG##rc-client_}       # strip prefix, leave v1.0.1
           echo "TAG=$TAG"
           echo "VERSION=$VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
