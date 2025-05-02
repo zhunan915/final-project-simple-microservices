@@ -11,7 +11,7 @@ app.use(cors({
   origin: 'http://localhost:3000'
 }));
 
-//test
+//test2
 
 app.get('/posts/:id/comments', (req, res) => {
   const postId = req.params.id;
