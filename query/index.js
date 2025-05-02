@@ -10,7 +10,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "http://qa.zhunandomain.live",
   })
 );
 
@@ -70,7 +70,7 @@ app.get("/db", (req, res) => {
 
 app.listen(8003, async () => {
   console.log("listening on http://localhost:8003");
-  const { data } = await axios.get("http://events-clusterip-srv:8005/events");
+  const { data } = await axios.get("http://backend-event-bus-service:8005/events");
   data.forEach(event => {
     handleEvents(event.type, event.data);
   });
