@@ -7,7 +7,7 @@ const PostCreate = () => {
   const onSubmit = async event => {
     event.preventDefault();
 
-    await axios.post("http://qa.zhunandomain.live/posts/create", {
+    await axios.post("http://qa.zhunandomain.live/post/create", {
       title,
     });
 

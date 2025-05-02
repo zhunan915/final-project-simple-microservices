@@ -22,7 +22,7 @@ app.get("/", (req, res) => {
   res.send("<h1>Welcome to post service</h1>");
 });
 
-app.post("/posts/create", async (req, res) => {
+app.post("/post/create", async (req, res) => {
   const id = randomBytes(4).toString("hex");
   const { title } = req.body;
 
@@ -54,7 +54,7 @@ app.post("/posts/create", async (req, res) => {
     .end();
 });
 
-app.get("/posts", (req, res) => {
+app.get("/post", (req, res) => {
   res
     .status(200)
     .json({
