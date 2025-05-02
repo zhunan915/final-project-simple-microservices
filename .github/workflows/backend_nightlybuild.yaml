@@ -87,5 +87,4 @@ jobs:
       - name: Run smoke/integration tests
         run: |
           echo "Run your smoke/integration tests here"
-          # For example:
-          curl --fail http://qa.zhunandomain.live/${SERVICE} || exit 1
+          curl -s -o /dev/null -w "%{http_code}" http://qa.zhunandomain.live/${SERVICE} | grep -qE "200|404" || exit 1
