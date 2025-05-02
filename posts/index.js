@@ -13,7 +13,7 @@ const DB = {};
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "http://qa.zhunandomain.live",
   })
 );
 
@@ -22,7 +22,7 @@ app.get("/", (req, res) => {
   res.send("<h1>Welcome to post service</h1>");
 });
 
-app.post("/post/create", async (req, res) => {
+app.post("/posts/create", async (req, res) => {
   const id = randomBytes(4).toString("hex");
   const { title } = req.body;
 
@@ -32,7 +32,7 @@ app.post("/post/create", async (req, res) => {
   };
 
   try {
-    await axios.post("http://events-clusterip-srv:8005/events", {
+    await axios.post("http://backend-event-bus-service:8005/events", {
       type: "postCreated",
       data: {
         id,
@@ -54,7 +54,7 @@ app.post("/post/create", async (req, res) => {
     .end();
 });
 
-app.get("/post", (req, res) => {
+app.get("/posts", (req, res) => {
   res
     .status(200)
     .json({
