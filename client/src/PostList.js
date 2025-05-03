@@ -8,14 +8,15 @@ const PostList = () => {
 
   const fetchPosts = async () => {
     const res = await axios.get("http://qa.zhunandomain.live/post");
-    setPosts(res.data.data);
+    setPosts(res.data.data || {});
   };
 
   useEffect(() => {
     fetchPosts();
   }, []);
 
-  const renderedPosts = Object.values(posts).map(post => {
+  // const renderedPosts = Object.values(posts).map(post => {
+  const renderedPosts = Object.values(posts || {}).map((post) => {
     return (
       <div
         className="card"
