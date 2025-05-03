@@ -13,12 +13,12 @@ app.use(cors({
 
 //test2
 
-app.get('/posts/:id/comments', (req, res) => {
+app.get('/post/:id/comments', (req, res) => {
   const postId = req.params.id;
   res.status(200).json(DB[postId] || []).end();
 });
 
-app.post('/posts/:id/comments', async (req, res) => {
+app.post('/post/:id/comments', async (req, res) => {
   const id = randomBytes(4).toString('hex')
   const { content } = req.body;
   const postId = req.params.id;
