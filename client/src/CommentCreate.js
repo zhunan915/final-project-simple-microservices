@@ -7,7 +7,7 @@ const CommentCreate = ({ postId }) => {
   const onSubmit = async event => {
     event.preventDefault();
 
-    await axios.post(`http://qa.zhunandomain.live/posts/${postId}/comments`, {
+    await axios.post(`http://qa.zhunandomain.live/post/${postId}/comments`, {
       content,
     });
 

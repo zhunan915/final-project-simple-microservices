@@ -7,7 +7,7 @@ const PostList = () => {
   const [posts, setPosts] = useState({});
 
   const fetchPosts = async () => {
-    const res = await axios.get("http://qa.zhunandomain.live/posts");
+    const res = await axios.get("http://qa.zhunandomain.live/post");
     setPosts(res.data.data);
   };
 
