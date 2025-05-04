@@ -20,6 +20,7 @@ app.use(
 // Routes
 app.get("/", (req, res) => {
   res.send("<h1>Welcome to post service</h1>");
+  console.log("hello");
 });
 
 app.post("/post/create", async (req, res) => {
