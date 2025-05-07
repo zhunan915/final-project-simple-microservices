@@ -23,12 +23,12 @@ jobs:
           echo "VERSION=$VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: Clone target repo
+      - name: Deploy to prod green version
         run: |
           git clone https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/zhunan915/augocd.git
           cd augocd
-          git checkout main
-          git pull -f origin main
+          git checkout green
+          git pull -f origin green
           cd frontend/client
           # sed -i 's#v1.0.0#v1.0.1#' frontend-client.yaml
           # sed -i "s#v[0-9]*\.[0-9]*\.[0-9]*#${VERSION}#" frontend-client.yaml
@@ -37,5 +37,29 @@ jobs:
           git config --global user.name "zhunan915"
           git add frontend-client.yaml
           git commit -m "Update frontend-client.yaml to ${VERSION}"
+          git push origin green
+      
+
+      - name: Test prod green version
+        run: |
+          echo "Testing green.zhunandomain.live..."
+          curl -o /dev/null -s -w "%{http_code}\n" green.zhunandomain.live
+          if [ $? -ne 0 ]; then
+            echo "Green deployment is not reachable. Exiting."
+            exit 1
+          fi
+
+      - name: Deploy to prod blue version
+        run: |
+          git clone https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/zhunan915/augocd.git
+          cd augocd
+          git checkout main
+          git pull -f origin main
+          cd frontend/client
+          sed -i "s#client:.*#client:${VERSION}#" frontend-client.yaml
+          git config --global user.email "zshuai@dons.usfca.edu"
+          git config --global user.name "zhunan915"
+          git commit -m "Update frontend-client.yaml to ${VERSION}"
           git push origin main
+
           
