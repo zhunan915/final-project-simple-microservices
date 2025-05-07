@@ -51,8 +51,9 @@ jobs:
 
       - name: Deploy to prod blue version
         run: |
+          rm -rf augocd
           git clone https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/zhunan915/augocd.git
-          # cd augocd
+          cd augocd
           git checkout main
           git pull -f origin main
           cd frontend/client
