@@ -57,7 +57,8 @@ jobs:
           git checkout main
           git pull -f origin main
           cd frontend/client
-          sed -i "s#client:.*#client:${VERSION}#" frontend-client.yaml
+          # sed -i "s#client:.*#client:${VERSION}#" frontend-client.yaml
+          sed -i "s#image: .*#image: 781942218065.dkr.ecr.us-east-1.amazonaws.com/frontend/client:${VERSION}#" frontend-client.yaml
           git config --global user.email "zshuai@dons.usfca.edu"
           git config --global user.name "zhunan915"
           git commit -m "Update frontend-client.yaml to ${VERSION}"
